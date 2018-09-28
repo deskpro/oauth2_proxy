@@ -21,19 +21,20 @@ func NewAzureProvider(p *ProviderData) *AzureProvider {
 	if p.ProfileURL == nil || p.ProfileURL.String() == "" {
 		p.ProfileURL = &url.URL{
 			Scheme:   "https",
-			Host:     "graph.windows.net",
-			Path:     "/me",
-			RawQuery: "api-version=1.6",
+			Host:     "graph.microsoft.com",
+			Path:     "/v1.0/me",
 		}
 	}
-	if p.ProtectedResource == nil || p.ProtectedResource.String() == "" {
-		p.ProtectedResource = &url.URL{
-			Scheme: "https",
-			Host:   "graph.windows.net",
-		}
-	}
+
+	p.ProtectedResource = nil
+	//if p.ProtectedResource == nil || p.ProtectedResource.String() == "" {
+	//	p.ProtectedResource = &url.URL{
+	//		Scheme: "https",
+	//		Host:   "graph.windows.net",
+	//	}
+	//}
 	if p.Scope == "" {
-		p.Scope = "openid"
+		p.Scope = "openid https://graph.microsoft.com/User.Read"
 	}
 
 	return &AzureProvider{ProviderData: p}
@@ -49,13 +50,14 @@ func (p *AzureProvider) Configure(tenant string) {
 		p.LoginURL = &url.URL{
 			Scheme: "https",
 			Host:   "login.microsoftonline.com",
-			Path:   "/" + p.Tenant + "/oauth2/authorize"}
+			Path:   "/" + p.Tenant + "/oauth2/v2.0/authorize"}
+
 	}
 	if p.RedeemURL == nil || p.RedeemURL.String() == "" {
 		p.RedeemURL = &url.URL{
 			Scheme: "https",
 			Host:   "login.microsoftonline.com",
-			Path:   "/" + p.Tenant + "/oauth2/token",
+			Path:   "/" + p.Tenant + "/oauth2/v2.0/token",
 		}
 	}
 }
